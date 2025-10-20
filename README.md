@@ -42,14 +42,14 @@ npm install @expo/vector-icons
 ---
 ## 🚀 Como rodar o projeto
 
-- Clone o repositório
+**Clone o repositório**
 git clone https://github.com/LucasCassiano1/ImcHealth.git
 
-- Acesse a pasta do projeto
+**Acesse a pasta do projeto**
 cd ImcHealth
 
-- Instale as dependências
+**Instale as dependências**
 npm install
 
-- Inicie o projeto
+**Inicie o projeto**
 npx expo start
