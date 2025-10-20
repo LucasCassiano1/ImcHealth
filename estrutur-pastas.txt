@@ -1,0 +1,52 @@
+/(ImcHealth-root)
+├─ App.js
+├─ app.json / expo.config.js
+├─ package.json
+├─ README.md
+├─ /assets
+│  ├─ /fonts
+│  │  └─ Poppins-Regular.ttf (etc)
+│  └─ /images
+│     └─ logo.png
+├─ /src
+│  ├─ /navigation
+│  │  └─ index.js                # cria NavigationContainer e bottom tabs (history, calculator, settings opcional)
+│  ├─ /screens
+│  │  ├─ CalculatorScreen.js     # layout com Title + Form
+│  │  ├─ HistoryScreen.js        # mostra lista do histórico, botão apagar e modal tabela
+│  │  └─ SettingsScreen.js       # (opcional) tema, limpar cache, sobre
+│  ├─ /components
+│  │  ├─ /Title
+│  │  │  ├─ index.js
+│  │  │  └─ styles.js
+│  │  ├─ /Form
+│  │  │  ├─ index.js             # formulário (inputs, picker, botões), validações, persiste no storage
+│  │  │  └─ styles.js
+│  │  ├─ /ResultIMC
+│  │  │  ├─ index.js
+│  │  │  └─ styles.js
+│  │  ├─ /IMCItem
+│  │  │  ├─ index.js             # item da lista (usado em HistoryScreen)
+│  │  │  └─ styles.js
+│  │  └─ /TableModal
+│  │     ├─ index.js             # modal que mostra a tabela de IMC
+│  │     └─ styles.js
+│  ├─ /services
+│  │  └─ storage.js              # wrapper para AsyncStorage (getAll, append, remove, clear)
+│  ├─ /utils
+│  │  └─ imc.js                  # funções puras: calcIMC, classifyIMC, estimateBodyFat, classifyBodyFat
+│  ├─ /hooks
+│  │  └─ useHistory.js           # hook para carregar/atualizar histórico (useFocusEffect internamente)
+│  ├─ /styles
+│  │  ├─ globals.js              # cores, fontes, espaçamentos (tema)
+│  │  └─ common.js               # estilos compartilhados (container, card, text)
+│  └─ /tests
+│     └─ imc.test.js         
+
+
+-> tela de configuracoes
+   Tema do aplicativo: alternar entre claro / escuro 🌞🌙
+   Idioma: português, inglês, espanhol (ótimo se quiser expandir)
+   Unidades de medida: metros ↔ pés, kg ↔ libras
+   Som e vibração: ativar/desativar vibração nos erros
+   Notificações: permitir lembretes (ex: “Calcule seu IMC semanalmente”)
