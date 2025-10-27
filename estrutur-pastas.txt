@@ -45,8 +45,4 @@
 
 
 -> tela de configuracoes
-   Tema do aplicativo: alternar entre claro / escuro 🌞🌙
-   Idioma: português, inglês, espanhol (ótimo se quiser expandir)
-   Unidades de medida: metros ↔ pés, kg ↔ libras
    Som e vibração: ativar/desativar vibração nos erros
-   Notificações: permitir lembretes (ex: “Calcule seu IMC semanalmente”)

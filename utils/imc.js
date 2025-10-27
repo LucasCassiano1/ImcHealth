@@ -1,3 +1,6 @@
+// src/utils/imc.js
+import i18n from "./i18n"; // ajusta o caminho se necessário
+
 /**
  * calculateIMC - retorna número (ex.: 23.45) ou null se inválido
  */
@@ -10,17 +13,17 @@ export function calculateIMC(heightStr, weightStr) {
 }
 
 /**
- * classifyIMC - retorna a string de classificação do IMC
+ * classifyIMC - retorna a string de classificação do IMC (já traduzida via i18n)
  */
 export function classifyIMC(value) {
   const n = parseFloat(value);
   if (isNaN(n)) return "";
-  if (n < 18.5) return "Baixo peso";
-  if (n >= 18.5 && n <= 24.9) return "Peso normal";
-  if (n >= 25 && n <= 29.9) return "Sobrepeso";
-  if (n >= 30 && n <= 34.9) return "Obesidade Grau I";
-  if (n >= 35 && n <= 39.9) return "Obesidade Grau II";
-  return "Obesidade Grau III ou mórbida";
+  if (n < 18.5) return i18n.t("Baixo peso");
+  if (n >= 18.5 && n <= 24.9) return i18n.t("Peso normal");
+  if (n >= 25 && n <= 29.9) return i18n.t("Sobrepeso");
+  if (n >= 30 && n <= 34.9) return i18n.t("Obesidade Grau I");
+  if (n >= 35 && n <= 39.9) return i18n.t("Obesidade Grau II");
+  return i18n.t("Obesidade Grau III ou mórbida");
 }
 
 /**
@@ -34,21 +37,21 @@ export function estimateBodyFat(bmi, ageNum = 0, sex = "male") {
 }
 
 /**
- * classifyBodyFat - interpretação simples por sexo
+ * classifyBodyFat - interpretação simples por sexo (retorna string traduzida)
  */
 export function classifyBodyFat(pct, sex = "male") {
   if (pct == null || isNaN(pct)) return "";
   if (sex === "male") {
-    if (pct < 6) return "Muito baixo";
-    if (pct <= 13) return "Atleta";
-    if (pct <= 17) return "Boa";
-    if (pct <= 24) return "Aceitável";
-    return "Obesidade";
+    if (pct < 6) return i18n.t("Muito baixo");
+    if (pct <= 13) return i18n.t("Atleta");
+    if (pct <= 17) return i18n.t("Boa");
+    if (pct <= 24) return i18n.t("Aceitável");
+    return i18n.t("Obesidade");
   } else {
-    if (pct < 14) return "Muito baixo";
-    if (pct <= 20) return "Atleta";
-    if (pct <= 24) return "Boa";
-    if (pct <= 31) return "Aceitável";
-    return "Obesidade";
+    if (pct < 14) return i18n.t("Muito baixo");
+    if (pct <= 20) return i18n.t("Atleta");
+    if (pct <= 24) return i18n.t("Boa");
+    if (pct <= 31) return i18n.t("Aceitável");
+    return i18n.t("Obesidade");
   }
 }

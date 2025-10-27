@@ -1,6 +1,11 @@
+// src/hooks/useHistory.js
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+
+import "../utils/i18n";                 // inicializa i18n (ajuste o caminho caso necessário)
+import { useTranslation } from "react-i18next";
+
 import { getHistory, clearHistory as clearHistoryService, removeEntry } from "../services/storage";
 
 /**
@@ -10,6 +15,7 @@ import { getHistory, clearHistory as clearHistoryService, removeEntry } from "..
  */
 
 export default function useHistory() {
+  const { t } = useTranslation();
   const [items, setItems] = useState([]);
 
   const load = useCallback(async () => {
@@ -32,43 +38,47 @@ export default function useHistory() {
 
   const clearHistory = useCallback(() => {
     Alert.alert(
-      "Apagar histórico",
-      "Deseja apagar todo o histórico de IMCs?",
+      t("Apagar histórico"),
+      t("Deseja apagar todo o histórico de IMCs?"),
       [
-        { text: "Cancelar", style: "cancel" },
+        { text: t("Cancelar"), style: "cancel" },
         {
-          text: "Apagar",
+          text: t("Apagar"),
           style: "destructive",
           onPress: async () => {
             try {
               await clearHistoryService();
               setItems([]);
+              // opcional: feedback
+              Alert.alert(t("Pronto"), t("Histórico apagado."));
             } catch (e) {
               console.warn("Erro ao apagar histórico", e);
+              Alert.alert(t("Erro"), t("Não foi possível apagar o histórico."));
             }
           },
         },
       ],
       { cancelable: true }
     );
-  }, []);
+  }, [t]);
 
   const removeItem = useCallback(
     (id) => {
       Alert.alert(
-        "Remover item",
-        "Deseja remover este registro?",
+        t("Remover item"),
+        t("Deseja remover este registro?"),
         [
-          { text: "Cancelar", style: "cancel" },
+          { text: t("Cancelar"), style: "cancel" },
           {
-            text: "Remover",
+            text: t("Remover"),
             style: "destructive",
             onPress: async () => {
               try {
-                const newList = await removeEntry(id);
-                setItems(newList);
+                const newList = await removeEntry(id); // espera que removeEntry retorne a lista atualizada
+                setItems(Array.isArray(newList) ? newList : []);
               } catch (e) {
                 console.warn("Erro removendo item", e);
+                Alert.alert(t("Erro"), t("Erro removendo item"));
               }
             },
           },
@@ -76,7 +86,7 @@ export default function useHistory() {
         { cancelable: true }
       );
     },
-    []
+    [t]
   );
 
   return {

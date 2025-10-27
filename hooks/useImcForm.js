@@ -1,20 +1,49 @@
 // src/hooks/useImcForm.js
-import { useState } from "react";
 import { Vibration } from "react-native";
 import { calculateIMC, estimateBodyFat, classifyBodyFat } from "../utils/imc";
 import { appendEntry } from "../services/storage";
+import { useState, useEffect } from "react";
 
-export default function useImcForm(initialSex = "male") {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const SETTINGS_KEY = "@imc_settings";
+
+// inicializa i18n (garante que os recursos foram carregados)
+import "../utils/i18n";
+import { useTranslation } from "react-i18next";
+
+export default function useImcForm(initialSex = "male", initialUnits = "metric") {
+  // hook de tradução
+  const { t } = useTranslation();
+
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [age, setAge] = useState("");
   const [sex, setSex] = useState(initialSex);
+  const [units, setUnits] = useState(initialUnits);
   const [messageIMC, setMessageIMC] = useState(null);
   const [imc, setIMC] = useState(null);
   const [bodyFat, setBodyFat] = useState(null);
   const [bodyFatClassification, setBodyFatClassification] = useState("");
-  const [textButton, setTextButton] = useState("Calcular");
+  const [textButton, setTextButton] = useState(t("Calcular"));
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const [vibrationEnabled, setVibrationEnabled] = useState(true);
+
+  // carrega preferência de vibração ao montar
+  useEffect(() => {
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(SETTINGS_KEY);
+        if (raw) {
+          const json = JSON.parse(raw);
+          setVibrationEnabled(json.vibrationEnabled !== false);
+        }
+      } catch (e) {
+        console.warn("Erro lendo preferência de vibração", e);
+      }
+    })();
+  }, []);
+
 
   async function saveEntryToHistory(bmiValue, bfValue, bfClass) {
     const entry = {
@@ -24,6 +53,7 @@ export default function useImcForm(initialSex = "male") {
       bodyFatClass: bfClass,
       sex,
       age: isNaN(parseInt(age, 10)) ? 0 : parseInt(age, 10),
+      units,
       date: new Date().toISOString(),
     };
     await appendEntry(entry);
@@ -33,12 +63,13 @@ export default function useImcForm(initialSex = "male") {
   async function imcCalculator() {
     setErrorMessage(null);
 
-    const bmi = calculateIMC(height, weight);
+    // passa units para calcular (compatível com a versão atualizada de calculateIMC)
+    const bmi = calculateIMC(height, weight, units);
     const ageNum = isNaN(parseInt(age, 10)) ? 0 : parseInt(age, 10);
 
-    if (bmi === null) {
+    if (bmi === null || vibrationEnabled) {
       Vibration.vibrate();
-      setErrorMessage("Altura e peso válidos são obrigatórios");
+      setErrorMessage(t("Altura e peso válidos são obrigatórios"));
       return null;
     }
 
@@ -50,8 +81,8 @@ export default function useImcForm(initialSex = "male") {
     setIMC(bmi);
     setBodyFat(bf);
     setBodyFatClassification(bfClass);
-    setMessageIMC("Seu IMC é igual:");
-    setTextButton("Calcular Novamente");
+    setMessageIMC(t("Seu IMC é igual:"));
+    setTextButton(t("Calcular Novamente"));
     setErrorMessage(null);
     setHeight("");
     setWeight("");
@@ -60,12 +91,12 @@ export default function useImcForm(initialSex = "male") {
   }
 
   function validationIMC() {
-    if (!weight || !height) {
+    if (!weight || !height || vibrationEnabled) {
       Vibration.vibrate();
-      setErrorMessage("Campo obrigatório*");
+      setErrorMessage(t("Campo obrigatório*"));
       setIMC(null);
-      setMessageIMC("Preencha o peso e a altura.");
-      setTextButton("Calcular");
+      setMessageIMC(t("Preencha o peso e a altura."));
+      setTextButton(t("Calcular"));
       return;
     }
     imcCalculator();
@@ -76,7 +107,7 @@ export default function useImcForm(initialSex = "male") {
     setMessageIMC(null);
     setBodyFat(null);
     setBodyFatClassification("");
-    setTextButton("Calcular");
+    setTextButton(t("Calcular"));
   }
 
   return {
@@ -84,6 +115,7 @@ export default function useImcForm(initialSex = "male") {
     weight, setWeight,
     age, setAge,
     sex, setSex,
+    units, setUnits,
     messageIMC, imc, bodyFat,
     bodyFatClassification,
     textButton, errorMessage,
