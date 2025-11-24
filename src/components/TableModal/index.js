@@ -41,7 +41,7 @@ export default function TableModal({ visible = false, onClose = () => {} }) {
           <View style={styles.tableRow}>
             <Text style={styles.rowLeft}>{t("35 a 39,9:")}</Text>
             <Text style={styles.rowRight}>{t("Obesidade Grau II")}</Text>
-          </View>
+          </View>  
 
           <View style={styles.tableRow}>
             <Text style={styles.rowLeft}>{t("≥ 40:")}</Text>
